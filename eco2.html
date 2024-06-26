@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juego de Atrapar Comida Orgánica</title>
+<style>
+  /* Estilos básicos para el juego */
+  body {
+    background-image: url('https://th.bing.com/th/id/OIP.fWTkdrNNlmGf8rUF4d3zlwHaEo?rs=1&pid=ImgDetMain');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #e4f9f5;
+  }
+  #game-container {
+    position: relative;
+    width: 600px;
+    height: 400px;
+    margin: 0 auto;
+    background-color: #f0f4c3;
+    overflow: hidden;
+  }
+  #bin {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+   background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url('https://th.bing.com/th/id/R.fcbeae607bded279f849256c426b291f?rik=klVMa3RT97Hmiw&riu=http%3a%2f%2fpixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com%2fimage%2f82d4f02ef7707c2.png&ehk=K6qWoGEkP91k1vUy8232q4yr1m5cBQdg8VurQ2W7nN4%3d&risl=&pid=ImgRaw&r=0');
+  }
+  .falling-item {
+  width: 50px;
+  height: 50px;
+  background-color: #ff7e67; /* Color por defecto */
+}
+
+.falling-item.trash {
+  background-color: #757575; /* Color para la basura */
+}
+
+.falling-item.organic {
+  background-color: #4caf50; /* Color para la comida orgánica */
+}
+  .falling-item {
+    position: absolute;
+    top: -50px; /* Iniciar fuera de la pantalla */
+    /* El resto de las propiedades se establecerán dinámicamente con JS */
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: aliceblue;
+  }
+</style>
+</head>
+<body>
+<div id="game-container">
+  <div id="bin"></div>
+</div>
+<div id="score">Puntos: 0</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const gameContainer = document.getElementById('game-container');
+  const bin = document.getElementById('bin');
+  let score = 0;
+
+  // Función para mover el contenedor
+  document.addEventListener('mousemove', (e) => {
+    bin.style.left = (e.pageX - gameContainer.offsetLeft - bin.offsetWidth / 2) + 'px';
+  });
+
+  // Función para generar elementos que caen
+  function generateFallingItems() {
+    const item = document.createElement('div');
+    item.classList.add('falling-item');
+    // Asignar posición aleatoria en X dentro del contenedor
+    if (Math.random() < 0.5) { // Suponiendo una probabilidad del 50%
+      function updateScore() {
+    document.getElementById('score').textContent = 'Puntos: ' + score;
+  }
+    item.classList.add('organic');
+  }
+  
+  // Resto del código...
+
+    item.style.left = Math.floor(Math.random() * (gameContainer.offsetWidth - 50)) + 'px';
+    gameContainer.appendChild(item);
+
+    // Mover el elemento hacia abajo
+    function moveItem() {
+      const itemPosition = item.offsetTop;
+      item.style.top = itemPosition + 4 + 'px'; // Velocidad de caída
+
+      // Verificar si el elemento ha tocado el contenedor
+      if (itemPosition > gameContainer.offsetHeight - bin.offsetHeight && 
+          item.offsetLeft > bin.offsetLeft && 
+          item.offsetLeft < bin.offsetLeft + bin.offsetWidth) {
+        score++;
+        updateScore();
+        item.remove(); // Eliminar elemento si es atrapado
+      } else if (itemPosition > gameContainer.offsetHeight) {
+        item.remove(); // Eliminar elemento si cae al fondo
+      } else {
+        requestAnimationFrame(moveItem); // Continuar movimiento si no ha tocado el fondo o el contenedor
+      }
+    }
+    moveItem();
+  }
+
+ 
+
+  // Generar elementos cada 2 segundos
+  setInterval(generateFallingItems, 2000);
+});
+</script>
+
+</body>
+</html>
